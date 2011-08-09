@@ -1,4 +1,4 @@
-			R-Forge SVN README
+﻿			R-Forge SVN README
 
 This file explains the repository structure of your project. A more
 detailed guide to R-Forge is available by 
@@ -74,3 +74,5 @@ http://journal.r-project.org/2009-1/RJournal_2009-1_Theussl+Zeileis.pdf
 [3] C. M. Pilato, B. Collins-Sussman, and B. W. Fitzpatrick. Version 
 Control with Subversion. O’Reilly, 2004. Full book available online at 
 http://svnbook.red-bean.com/
+
+test
