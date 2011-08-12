@@ -6,7 +6,7 @@ function(beta.mat, factor.cov, residVars.vec) {
 ## residVars.vec  n x 1 vector of residual variances from factor model
 ## Output:
 ## cov.fm			    n x n excess return covariance matrix based on
-##				        estimated factor model
+##				        estimated factor model.
 	beta.mat = as.matrix(beta.mat)
 	factor.cov = as.matrix(factor.cov)
 	sig.e = as.vector(residVars.vec)
