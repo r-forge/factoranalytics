@@ -2,10 +2,10 @@
 \alias{factorModelCovariance}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-compute covariance matrix from estimated factor model.
+Compute Factor Model Covariance Matrix.
 }
 \description{
-compute covariance matrix from estimated factor model.
+Compute asset return covariance matrix from factor model parameters.
 }
 \usage{
 factorModelCovariance(beta.mat, factor.cov, residVars.vec)
@@ -13,17 +13,33 @@ factorModelCovariance(beta.mat, factor.cov, residVars.vec)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{beta.mat}{
-N x K matrix of factor betas.
+\code{N x K} matrix of factor betas, where \code{N} is the number of assets and
+\code{K} is the number of factors.
 }
   \item{factor.cov}{
-K x K factor excess return covariance matrix.
+\code{K x K} factor return covariance matrix.
 }
   \item{residVars.vec}{
-N x 1 vector of residual variances from factor model.
+\code{N x 1} vector of asset specific residual variances from the factor model.
 }
+}
+\details{
+The return on asset \code{i} (\code{i = 1,...,N}) is assumed to follow the factor model \cr
+\code{R(i,t) = alpha + beta'F(t) + e(i,t), e(i,t) ~ iid (0, sig(i)^2)} \cr
+where \code{beta} is a \code{K x 1} vector of factor exposures. The return variance
+is then \cr
+\code{var(R(i,t)} = beta'var(F(t))*beta + sig(i)^2}, \cr
+and the \code{N x N} covariance matrix of the return vector \code{R} is \cr
+\code{var(R) = B*var(F(t))*B' + D} \cr
+where B is the \code{N x K} matrix of asset betas and \code{D} is a diagonal matrix with
+\code{sig(i)^2} values along the diagonal.
 }
 \value{
-N x N excess return covariance matrix based on estimated factor model.
+\code{N x N} return covariance matrix based on factor model parameters.
+}
+\references{
+Zivot, E. and J. Wang (2006), \emph{Modeling Financial Time Series with S-PLUS, 
+Second Edition}, Springer-Verlag.
 }
 \author{
 Eric Zivot and Yi-An Chen. 

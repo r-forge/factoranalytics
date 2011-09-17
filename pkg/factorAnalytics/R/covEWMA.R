@@ -6,6 +6,9 @@ function(factors, lambda=0.96) {
 ## lambda     scalar. exponetial decay factor between 0 and 1. 
 ## Output:  
 ## cov.f.ewma  array. dimension is N x K x K.
+## comments:
+## 1. add optional argument cov.start to specify initial covariance matrix
+## 2. allow data input to be data class to be any rectangular data object
   
 
 if (is.data.frame(factors)){
@@ -18,7 +21,7 @@ if (is.data.frame(factors)){
   stop("factor data should be saved in data.frame class.") 
 }
 if (lambda>=1 || lambda <= 0){
-  stop("exponetial decay facotr lambda should be between 0 and 1.")
+  stop("exponential decay value lambda should be between 0 and 1.")
 } else {
   cov.f.ewma = array(,c(t.factor,k.factor,k.factor))
   cov.f = var(factors)  # unconditional variance as EWMA at time = 0 
@@ -30,7 +33,8 @@ if (lambda>=1 || lambda <= 0){
   }
     
 }
- 
+  # 9/15/11: add dimnames to array
+  dimnames(cov.f.ewma) = list(t.names, factor.names, factor.names)
   return(cov.f.ewma)  
 
 }

@@ -2,11 +2,11 @@
 \alias{covEWMA}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-compute RiskMetrics-type EWMA covariance matrix
+Compute RiskMetrics-type EWMA Covariance Matrix
 }
 \description{
-compute RiskMetrics-type EWMA covariance matrix. Covariance matrix at time 0 is 
-presumed to be the unconditional covariance of factors. 
+Compute time series of RiskMetrics-type EWMA covariance matrices of returns. Initial covariance 
+matrix is assumed to be the unconditional covariance matrix. 
 }
 \usage{
 covEWMA(factors, lambda = 0.96)
@@ -14,15 +14,24 @@ covEWMA(factors, lambda = 0.96)
 
 \arguments{
   \item{factors}{
-N x K numerical factors data.  data is class data.frame
-N is the time length and K is the number of the factors.
+\code{T x K} data.frame containing asset returns, where \code{T} is the number of time
+periods and \code{K} is the number of assets.
 }
   \item{lambda}{
-scalar. exponetial decay factor between 0 and 1.
+Scalar exponential decay factor. Must lie between between 0 and 1.
 }
+}
+\details{
+Let EWMA covariance matrix at time \code{t} is compute as \cr 
+\code{Sigma(t) = lambda*Sigma(t-1) + (1-lambda)*R(t)R(t)'}  \cr
+where \code{R(t)} is the \code{K x 1} vector of returns at time \code{t}.
 }
 \value{
-array. dimension is N x K x K.
+\code{T x K x K} array giving the time series of EWMA covariance matrices. 
+}
+\references{
+Zivot, E. and J. Wang (2006), \emph{Modeling Financial Time Series with S-PLUS, 
+Second Edition}, Springer-Verlag.
 }
 \author{
 Eric Zivot and Yi-An Chen.

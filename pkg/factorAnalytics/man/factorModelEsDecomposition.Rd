@@ -2,81 +2,75 @@
 \alias{factorModelEsDecomposition}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Compute factor model factor ES decomposition
+Compute Factor Model Factor ES Decomposition
 }
 \description{
-Compute factor model factor ES decomposition based on Euler's theorem given historic 
-or simulated data and factor model parameters.
-The partial derivative of ES wrt factor beta is computed
-as the expected factor return given fund return is less than or equal to its VaR
-VaR is compute either as the sample quantile or as an estimated quantile
-using the Cornish-Fisher expansion.
+Compute the factor model factor expected shortfall (ES) decomposition for an asset 
+based on Euler's theorem given historic or simulated data and factor model parameters.
+The partial derivative of ES with respect to factor beta is computed
+as the expected factor return given fund return is less than or equal to its 
+value-at-risk (VaR). VaR is compute as the sample quantile of the historic or
+simulated data.
 }
 \usage{
-factorModelEsDecomposition(bootData, beta.vec, sig2.e, tail.prob = 0.01, 
-                                VaR.method = c("HS", "CornishFisher"))
+factorModelEsDecomposition(bootData, beta.vec, sig2.e, tail.prob = 0.05)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{bootData}{
-              B x (k+2) matrix of bootstrap data. First column contains the fund returns,
-              second through k+1 columns contain factor returns, (k+2)nd column contain residuals
-              scaled to have variance 1.
+  \code{B x (k+2)} matrix of historic or simulated data. The first column 
+  contains the fund returns, the second through \code{k+1}st columns contain 
+  the returns on the \code{k} factors, and the \code{(k+2)}nd column contain 
+  residuals scaled to have unit variance.
 }
   \item{beta.vec}{
-              k x 1 vector of factor betas.
+\code{k x 1} vector of factor betas.
 }
-  \item{sig2.e}{
-             scalar, residual variance from factor model.
+\item{sig2.e}{
+scalar, residual variance from factor model.
 }
-  \item{tail.prob}{
-      scalar, tail probability
-}
-    \item{VaR.method}{
-              character, method for computing VaR. Valid choices are "HS" for
-            historical simulation (empirical quantile); "CornishFisher" for
-            modified VaR based on Cornish-Fisher quantile estimate. Cornish-Fisher
-            computation is done with the VaR.CornishFisher in the PerformanceAnalytics
-            package
+\item{tail.prob}{
+scalar, tail probability for VaR quantile. Typically 0.01 or 0.05. 
 }
 }
 \details{
- The factor model has the form
- R(t) = beta'F(t) + e(t) = beta.star'F.star(t)
- where beta.star = (beta, sig.e)' and F.star(t) = (F(t)', z(t))'
- By Euler's theorem
- ES.fm = sum(cES.fm) = sum(beta.star*mcES.fm)
+ The factor model has the form \cr
+ \code{R(t) = beta'F(t) + e(t) = beta.star'F.star(t)} \cr
+ where \code{beta.star = (beta, sig.e)'} and \code{F.star(t) = (F(t)', z(t))'} 
+ By Euler's theorem \cr
+ \code{ES.fm = sum(cES.fm) = sum(beta.star*mcES.fm)} \cr
+ 
 }
-\value{
-\item{VaR.fm}{
-Scalar, bootstrap VaR value for fund reported as a positive number.
+\value{A list with the following components:
+\item{VaR}{
+Scalar, nonparametric VaR value for fund reported as a positive number.
 }  
 \item{n.exceed}{
 Scalar, number of observations beyond VaR.
 }            
 \item{idx.exceed}{
-n.exceed x 1 vector giving index values of exceedences.
+\code{n.exceed x 1} vector giving index values of exceedences.
 }
-\item{ES.fm}{
-scalar, bootstrap ES value for fund reported as a positive number.
+\item{ES}{
+scalar, nonparametric ES value for fund reported as a positive number.
 }
-\item{mcES.fm}{
-(K+1) x 1 vector of factor marginal contributions to ES.
+\item{mcES}{
+\code{(K+1) x 1} vector of factor marginal contributions to ES.
 }   
-\item{cES.fm}{
-(K+1) x 1 vector of factor component contributions to ES.
+\item{cES}{
+\code{(K+1) x 1} vector of factor component contributions to ES.
 }
-\item{pcES.fm}{
-(K+1) x 1 vector of factor percent contributions to ES.
+\item{pcES}{
+\code{(K+1) x 1} vector of factor percent contributions to ES.
 }          
 }
 \references{
 1. Hallerback (2003), "Decomposing Portfolio Value-at-Risk: A General Analysis",
-    The Journal of Risk 5/2.
+    \emph{The Journal of Risk} 5/2. \cr
 2. Yamai and Yoshiba (2002). "Comparative Analyses of Expected Shortfall and
-   Value-at-Risk: Their Estimation Error, Decomposition, and Optimization
-    Bank of Japan.
-3. Meucci (2007). "Risk Contributions from Generic User-Defined Factors," Risk.
+   Value-at-Risk: Their Estimation Error, Decomposition, and Optimization",
+    Bank of Japan. \cr
+3. Meucci (2007). "Risk Contributions from Generic User-Defined Factors," \emph{Risk}.
 }
 \author{
 Eric Zviot and Yi-An Chen.
