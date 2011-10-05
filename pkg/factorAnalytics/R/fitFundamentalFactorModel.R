@@ -1,10 +1,13 @@
 fitFundamentalFactorModel <-
-function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "classic", 
-                   covariance = "classic", full.resid.cov = TRUE, robust.scale = FALSE, 
-                   returnsvar = "RETURN") {
+function (fulldata, timedates, exposures, assets, wls = FALSE, regression = "classic", 
+          covariance = "classic", full.resid.cov = TRUE, robust.scale = FALSE, 
+          datevar = "DATE", assetvar = "PERMNO", returnsvar = "RETURN", 
+          tickersvar = "TICKER.x") {
+  
+
 ## input
 ##  
-## fmdsobj                : an fmdsCube object (i.e. the data)
+## fulldata               : data.frame. data stacked by dates
 ## timedates              : a vector of Dates specifying the date range for the model
 ##                          fitting
 ## exposures              : a character vector of exposure names for the factor model
@@ -20,8 +23,11 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
 ##                          calculation, FALSE for diagonal residual covarinace matrix
 ## robust.scale           : logical flag, TRUE for exposure scaling via robust scale and
 ##                          location, FALSE for scaling via mean and sd
-## returnsvar             : character string giving the name of the return variable in the array.
-##                     
+## datevar                : character string giving the name of the date variable in the data.
+## assetvar               : character string giving the name of the asset variable in the data.
+## returnsvar             : character string giving the name of the return variable in the data.               
+## tickersvar             : character string giving the name of the ticker variable in the data.
+  
 ## output
 ## 
 ## cov.returns            : covariance information for asset returns, includes
@@ -52,11 +58,7 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
     wls <- as.logical(wls)
     full.resid.cov <- as.logical(full.resid.cov)
     robust.scale <- as.logical(robust.scale)
-    datevar <- fmdsobj@index$datevar    # datavar = "DATE"
-    assetvar <- fmdsobj@index$assetvar  # assetvar = "PERMNO"
       
-    # datevar <- "DATE"    # datavar = "DATE"
-    # assetvar <- "PERMNO"  # assetvar = "PERMNO"
     if (!match(regression, c("robust", "classic"), FALSE)) 
         stop("regression must one of 'robust', 'classic'.")
     if (!match(covariance, c("robust", "classic"), FALSE)) 
@@ -65,80 +67,17 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
     
     if (match(returnsvar, exposures, FALSE)) 
         stop(paste(returnsvar, "cannot be used as an exposure."))
-    # class:  fmdsCube.CRSP
-    # data:  96 x 13 x 447 
-    # dates: 1996-01-31 to 2003-12-31
-    # numeric data:
-    # PRICE, RETURN, VOLUME, SHARES.OUT, MARKET.EQUITY, LTDEBT.CA009, NET.SALES.CA12, 
-    # COMMON.EQUITY.CA60, NET.INCOME.CA172, STOCKHOLDERS.EQUITY.CA216, LOG.MARKETCAP, LOG.PRICE, BOOK2MARKET
-    # non-numeric data: DATE, PERMNO, COMPANY.NAME, TICKER, GICS, GICS.INDUSTRY, GICS.SECTOR
-    # shrink to smaller dataset cantaining only assets required and 
-    fmdsobj <- subset(fmdsobj, assetsToRetrieve = assets,  
-                      datesToRetrieve = list(start = timedates[1], end = timedates[length(timedates)]), 
-                      variablesToRetrieve = c(returnsvar, exposures))
-    # fmdsobj
-    # class:  fmdsCube.CRSP
-    # data:  96 x 2 x 447 
-    # dates: 1996-01-31 to 2003-12-31
-    # numeric data: RETURN, BOOK2MARKET
-    # non-numeric data: TICKER, DATE, PERMNO                  
-    # get dates
-    timedates <- as.Date(getAvailableTimes(fmdsobj))
-    # gets PERMNO asset ID
-    assets <- getAssetIDs(fmdsobj)
-    # get tickers and order by number from big to small
-    tickers <- unlist(getAssetLabels(fmdsobj))
-    tickers <- tickers[order(names(tickers))]
-    if (any(names(tickers) != assets)) 
-        stop("assets and tickers don't match, debug")
-    # only strings left
-    names(tickers) <- NULL
-    returnsobj <- subset(fmdsobj, variablesToRetrieve = returnsvar, 
-                          datesToRetrieve = list(start = timedates[2], 
-                         end = timedates[length(timedates)]))
-    # returnsobj
-    # class:  fmdsCube.CRSP
-    # data:  95 x 1 x 447 
-    # dates: 1996-02-29 to 2003-12-31
-    # numeric data: RETURN
-    # non-numeric data: TICKER, DATE, PERMNO
-    fmdsobj <- scaleNumericFactors(subset(fmdsobj, variablesToDrop = returnsvar, 
-                                   datesToRetrieve = list(start = timedates[1], 
-                                   end = timedates[length(timedates) - 1])), robust.location = robust.scale, 
-                                   robust.scale = robust.scale)
-    # class:  fmdsCube.CRSP
-    # data:  95 x 1 x 447 
-    # dates: 1996-01-31 to 2003-11-28
-    # numeric data: BOOK2MARKET
-    # non-numeric data: TICKER, DATE, PERMNO
-    numTimePoints <- length(getAvailableTimes(fmdsobj))
+    
+    
+    numTimePoints <- length(timedates)
     numExposures <- length(exposures)
     numAssets <- length(assets)
-    # get factors by stacking the equation for each asset at time t 
-    flat.factors <- flatten(fmdsobj, along = "date")
-    # class(flat.factors)
-    # [1] "data.frame"                     
-    # get returns  by stacking the equation for each asset at time t 
-    flat.returns <- flatten(returnsobj, along = "date")
-    flat.factors[[datevar]] <- as.character(timedates[match(as.character(flat.factors[[datevar]]), 
-                                                            as.character(timedates), 0) + 1])
-    # dim(flat.factors)
-    # [1] 42465     4
-    # flat.factors[[2]]
-    # [1] "RETURN" "DATE"   "PERMNO" "TICKER"
-    # get full dataset by combining return and factors data and stacking 
-    # the equation for each assets
-    fulldata <- merge(flat.returns, flat.factors, by = c(assetvar,datevar), all = TRUE)
-    fulldata[[datevar]] <- as.Date(fulldata[[datevar]])
-    fulldata <- fulldata[order(fulldata[[datevar]], fulldata[[assetvar]]),]
+    tickers   <- fulldata[1:numAssets,tickersvar]
     # dim(fulldata)
-    # [1] 42912     6
+    # [1] 42912   117  
     # dimnames(fulldata)
     # PERMNO"      "DATE"        "RETURN"      "TICKER.x"    "BOOK2MARKET" "TICKER.y"
-    ##
-    ## note: fulldata can be the data input
-    ##
-    # check if exposures are numeric, if not, create exposures. factors by dummy variables
+        # check if exposures are numeric, if not, create exposures. factors by dummy variables
     which.numeric <- sapply(fulldata[, exposures, drop = FALSE],is.numeric)
     exposures.numeric <- exposures[which.numeric]
     # industry factor model
@@ -239,8 +178,11 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
             model$resid)
     }
     # FE.hat has T  elements
-    # every element t contains 1. number of factors (intercept incl.) 2. estimated factors at time t 
-    # 3. t value of estimated factors 4. residuals  at time t       
+    # every element t contains 
+    # 1. number of factors (intercept incl.) 
+    # 2. estimated factors at time t 
+    # 3. t value of estimated factors 
+    # 4. residuals  at time t       
     if (!wls) {
         if (regression == "robust") {
             # ols.robust    
@@ -303,8 +245,8 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
                     assets)
     }
     FE.hat.mat <- matrix(NA, ncol = ncols, nrow = numTimePoints, 
-    dimnames = list(as.character(as.Date(as.numeric(names(FE.hat)))), 
-                    cnames))
+                         dimnames = list(as.character(as.Date(as.numeric(names(FE.hat)), origin = "1970-01-01")), 
+                         cnames))
     # give each element t names and PERMNO
     for (i in 1:length(FE.hat)) {
         names(FE.hat[[i]])[1] <- "numCoefs"
@@ -321,13 +263,13 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
     timedates <- as.Date(as.numeric(dimnames(FE.hat)[[1]]), origin = "1970-01-01")
     coefs.names <- colnames(FE.hat.mat)[2:(1 + numCoefs)]
     # estimated factors ordered by time
-    F.hat <- zoo(x = FE.hat.mat[, 2:(1 + numCoefs)], order.by = timedates)
+    f.hat <- zoo(x = FE.hat.mat[, 2:(1 + numCoefs)], order.by = timedates)
     # check for outlier
-    gomat <- apply(coredata(F.hat), 2, function(x) abs(x - median(x, 
+    gomat <- apply(coredata(f.hat), 2, function(x) abs(x - median(x, 
                                       na.rm = TRUE)) > 4 * mad(x, na.rm = TRUE))
     if (any(gomat, na.rm = TRUE) ) {
         cat("\n\n*** Possible outliers found in the factor returns:\n\n")
-        for (i in which(apply(gomat, 1, any, na.rm = TRUE))) print(F.hat[i, 
+        for (i in which(apply(gomat, 1, any, na.rm = TRUE))) print(f.hat[i, 
             gomat[i, ], drop = FALSE])
     }
     tstats <- zoo(x = FE.hat.mat[, (2 + nc):(1 + 2 * nc)], order.by = timedates)
@@ -336,12 +278,12 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
         numCoefs + numAssets)], order.by = timedates)
     colnames(E.hat) <- tickers
     if (covariance == "robust") {
-        if (kappa(na.exclude(coredata(F.hat))) < 1e+10) {
-            Cov.facrets <- covRob(coredata(F.hat), estim = "pairwiseGK", 
+        if (kappa(na.exclude(coredata(f.hat))) < 1e+10) {
+            Cov.facrets <- covRob(coredata(f.hat), estim = "pairwiseGK", 
                             distance = FALSE, na.action = na.omit)
         } else {
             cat("Covariance matrix of factor returns is singular.\n")
-            Cov.facrets <- covRob(coredata(F.hat), distance = FALSE, 
+            Cov.facrets <- covRob(coredata(f.hat), distance = FALSE, 
                                   na.action = na.omit)
         }
         resid.vars <- apply(coredata(E.hat), 2, scaleTau2, na.rm = T)^2
@@ -350,7 +292,7 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
         else 
           diag(resid.vars)
     }   else {
-        Cov.facrets <- ccov(coredata(F.hat), distance = FALSE,na.action = na.omit)
+        Cov.facrets <- ccov(coredata(f.hat), distance = FALSE,na.action = na.omit)
         resid.vars <- apply(coredata(E.hat), 2, var, na.rm = TRUE)
         D.hat <- if (full.resid.cov) 
             ccov(coredata(E.hat), distance = FALSE, na.action = na.omit)
@@ -380,15 +322,15 @@ function (fmdsobj, timedates, exposures, assets, wls = FALSE, regression = "clas
     if (full.resid.cov) {
         Cov.resids <- D.hat
         dimnames(Cov.resids$cov) <- list(tickers, tickers)
-    }
+        }
     else {
       Cov.resids <- NULL
     }
     output <- list(cov.returns = Cov.returns, 
                    cov.factor.rets = Cov.facrets, 
                    cov.resids = Cov.resids, 
-                   resid.vars = diag(D.hat), 
-                   factor.rets = F.hat, 
+                   resid.vars = resid.vars, 
+                   factor.rets = f.hat, 
                    resids = E.hat, 
                    tstats = tstats, 
                    returns.data = fulldata[,c(datevar, assetvar, returnsvar)], 

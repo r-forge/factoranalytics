@@ -13,8 +13,8 @@ fitFundamentalFactorModel(fmdsobj, timedates, exposures, assets, wls = FALSE, re
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{fmdsobj}{
-an fmdsCube object (i.e. the data)
+  \item{fulldata}{
+data.frame. fulldata contains returns, dates, and exposures which is stacked by dates
 }
   \item{timedates}{
 a vector of Dates specifying the date range for the model fitting
@@ -46,8 +46,17 @@ logical flag, TRUE for exposure scaling via robust scale and
 location, FALSE for scaling via mean and sd
 }
   \item{returnsvar}{
-character string giving the name of the return variable in the array.
+character string giving the name of the return variable in the data.
+}  
+   \item{datevar}{
+character string giving the name of the date variable in the data.
 }
+  \item{assetvar} {
+  character string giving the name of the asset variable in the data.
+  }                
+ \item{tickersvar} {
+  character string giving the name of the ticker variable in the data.
+  }
 }
 \details{
 The original function was designed by Doug Martin and originally implemented in S-PLUS by a number of
@@ -58,40 +67,42 @@ robustbase Basic robust statistics package for R
 }
 \value{
 \item{cov.returns}{
-covariance information for asset returns, includes
-covariance, mean, eigenvalus
+A "list" object contains covariance information for asset returns, includes covariance, mean and eigenvalus.
 }           
 \item{cov.factor.rets}{
-covariance information for factor returns, includes
-covariance and mean
+An object of class "cov" or "covRob" which contains the covariance matrix of the 
+factor returns (including intercept).
 }          
 \item{cov.resids}{
-covariance information for model residuals, includes
-covariance and mean
+An object of class "cov" or "covRob" which contains the covariance matrix of the 
+residuals, if "full.resid.cov" is TRUE.  NULL if "full.resid.cov" is FALSE.
 }         
 \item{resid.vars}{
-list of information regarding model residuals variance
+A vector of variances estimated from the OLS residuals for each asset. If "wls" is 
+TRUE, these are the weights used in the weighted least squares regressions.  If "cov = robust"
+these values are computed with "scale.tau".  Otherwise they are computed with "var".
 }            
-\item{factor.rets}{
-zoo time series object of factor returns
+\item{factor.rets}{ 
+A "zoo"  object containing the times series of estimated factor returns and 
+intercepts.
 }               
 \item{resids}{
-zoo time series object of model residuals
+A "zoo" object containing the time series of residuals for each asset.
 }               
 \item{tstats}{
-zoo time series object of model t-statistics
+A "zoo" object containing the time series of t-statistics for each exposure.
 }                 
 \item{returns.data}{
-data.frame of return data including RETURN, DATE,PERMNO
+A "data.frame" object containing the returns data for the assets in the factor model, including RETURN, DATE,PERMNO.
 } 
 \item{exposure.data}{
-data.frame of exposure data including DATE, PERMNO
+A "data.frame" object containing the data for the variables in the factor model, including DATE, PERMNO.
 }
 \item{assets}{
-character vector of PERMNOs used in the model
+A character vector of PERMNOs used in the model
 } 
 \item{tickers}{
-character vector of tickers used in the model
+A character vector of tickers used in the model
 }                
 \item{call}{
 function call
@@ -103,18 +114,13 @@ Guy Yullen and Yi-An Chen
 }
 
 \examples{
-library(facmod)
-
-objects("package:facmod")
-data(fmdata)
-assets <- getAssetIDs(fmdata)
-timedates <- as.Date(getAvailableTimes(fmdata))
+data(CRSP)
+# there are 447 assets 
+assets = fulldata[1:447,"PERMNO"]
+t=seq(from=1,to=42465,by=447)
+timedates = as.Date(fulldata[t,"DATE"])
 exposures <- exposures.names <- c("BOOK2MARKET", "LOG.MARKETCAP")
-slotNames(fmdata)
-class(fmdata@data)
-dim(fmdata@data)
-
-test.fit <- fitFundamentalFactorModel(fmdsobj=fmdata, timedates=timedates, exposures=exposures,
+test.fit <- fitFundamentalFactorModel(fulldata=fulldata, timedates=timedates, exposures=exposures,
                                       covariance="classic", assets=assets,full.resid.cov=TRUE,
                                       regression="classic",wls=TRUE)
 names(test.fit)
