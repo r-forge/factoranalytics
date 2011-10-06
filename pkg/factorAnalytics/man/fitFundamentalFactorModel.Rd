@@ -14,7 +14,7 @@ fitFundamentalFactorModel(fmdsobj, timedates, exposures, assets, wls = FALSE, re
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{fulldata}{
-data.frame. fulldata contains returns, dates, and exposures which is stacked by dates
+data.frame. fulldata contains returns, dates, and exposures which is stacked by dates.
 }
   \item{timedates}{
 a vector of Dates specifying the date range for the model fitting
@@ -30,12 +30,12 @@ logical flag, TRUE for weighted least squares, FALSE for
 ordinary least squares
 }
   \item{regression}{
-character string, "robust" for regression via lmRob, "classic"
-for regression via lm
+A character string, "robust" for regression via lmRob, "classic"
+for regression with lm()
 }
   \item{covariance}{
-character string, "robust" for covariance matrix computed via
-covRob, "classic" for covariance matrix via ccov
+A character string, "robust" for covariance matrix computed with
+covRob(), "classic" for covariance matrix with ccov()
 }
   \item{full.resid.cov}{
 logical flag, TRUE for full residual covariance matrix
@@ -46,16 +46,16 @@ logical flag, TRUE for exposure scaling via robust scale and
 location, FALSE for scaling via mean and sd
 }
   \item{returnsvar}{
-character string giving the name of the return variable in the data.
+A character string giving the name of the return variable in the data.
 }  
    \item{datevar}{
-character string giving the name of the date variable in the data.
+A character string giving the name of the date variable in the data.
 }
   \item{assetvar} {
-  character string giving the name of the asset variable in the data.
+A  character string giving the name of the asset variable in the data.
   }                
  \item{tickersvar} {
-  character string giving the name of the ticker variable in the data.
+A character string giving the name of the ticker variable in the data.
   }
 }
 \details{
@@ -114,11 +114,11 @@ Guy Yullen and Yi-An Chen
 }
 
 \examples{
+# BARRA type factor model
 data(CRSP)
 # there are 447 assets 
-assets = fulldata[1:447,"PERMNO"]
-t=seq(from=1,to=42465,by=447)
-timedates = as.Date(fulldata[t,"DATE"])
+assets = unique(fulldata[,"PERMNO"])
+timedates = as.Date(unique(fulldata[,"DATE"]))
 exposures <- exposures.names <- c("BOOK2MARKET", "LOG.MARKETCAP")
 test.fit <- fitFundamentalFactorModel(fulldata=fulldata, timedates=timedates, exposures=exposures,
                                       covariance="classic", assets=assets,full.resid.cov=TRUE,
@@ -127,4 +127,11 @@ names(test.fit)
 test.fit$cov.returns
 test.fit$cov.facrets
 test.fit$facrets
+
+# BARRA type Industry Factor Model
+exposures <- exposures.names <- c("GICS.SECTOR") 
+# the rest keep the same
+test.fit <- fitFundamentalFactorModel(fulldata=fulldata, timedates=timedates, exposures=exposures,
+                                      covariance="classic", assets=assets,full.resid.cov=TRUE,
+                                      regression="classic",wls=TRUE)
 }

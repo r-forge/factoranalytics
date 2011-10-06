@@ -13,7 +13,7 @@ PRICE, RETURN, VOLUME, SHARES.OUT, MARKET.EQUITY,LTDEBT, NET.SALES, COMMON.EQUIT
 Categorical data: 
 GICS, GICS.INDUSTRY, GICS.SECTOR
 Identication data:
-DATE, PERMNO, COMPANY.NAME, TICKER
+DATE, PERMNO, TICKER.x
 }
 \source{
 beta package "facmod" from Guy Yullen
