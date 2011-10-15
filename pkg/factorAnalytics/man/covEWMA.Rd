@@ -23,7 +23,7 @@ Scalar exponential decay factor. Must lie between between 0 and 1.
 }
 \details{
 Let EWMA covariance matrix at time \code{t} is compute as \cr 
-\code{Sigma(t) = lambda*Sigma(t-1) + (1-lambda)*R(t)R(t)'}  \cr
+\code{Sigma(t) = lambda*Sigma(t-1) + (1-lambda)*R(t)t(R(t))}  \cr
 where \code{R(t)} is the \code{K x 1} vector of returns at time \code{t}.
 }
 \value{
