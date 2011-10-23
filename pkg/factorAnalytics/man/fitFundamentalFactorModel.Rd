@@ -9,9 +9,7 @@ fit fundamental factor model or cross-sectional time series factor model by clas
 (value, growth) etc. to determine the common risk factors.
 }
 \usage{
-fitFundamentalFactorModel(fulldata, timedates, exposures, assets, wls = FALSE, regression = "classic", 
-                          covariance = "classic", full.resid.cov = TRUE, robust.scale = FALSE, 
-                          datevar = "DATE", assetvar = "PERMNO", returnsvar = "RETURN", 
+fitFundamentalFactorModel(fulldata, timedates, exposures, assets, wls = FALSE,    regression = "classic", covariance = "classic", full.resid.cov = TRUE, robust.scale = FALSE, datevar = "DATE", assetvar = "PERMNO", returnsvar = "RETURN", 
                           tickersvar = "TICKER.x")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -118,13 +116,12 @@ Guy Yullen and Yi-An Chen
 
 \examples{
 # BARRA type factor model
-data(CRSP)
-# there are 447 assets 
+data(stock)
+# there are 447 assets  
 assets = unique(fulldata[,"PERMNO"])
 timedates = as.Date(unique(fulldata[,"DATE"]))
 exposures <- exposures.names <- c("BOOK2MARKET", "LOG.MARKETCAP") 
-test.fit <- fitFundamentalFactorModel(fulldata=fulld ata, timedates=timedates, exposures=exposures,
-                                      covariance="classic", assets=assets,full.resid.cov=TRUE,
+test.fit <- fitFundamentalFactorModel(fulldata=fulld ata, timedates=timedates, exposures=exposures,covariance="classic", assets=assets,full.resid.cov=TRUE,
                                       regression="classic",wls=TRUE)
 names(test.fit)
 test.fit$cov.returns
