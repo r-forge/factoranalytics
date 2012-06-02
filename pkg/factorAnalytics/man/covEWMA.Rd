@@ -9,7 +9,7 @@ Compute time series of RiskMetrics-type EWMA covariance matrices of returns. Ini
 matrix is assumed to be the unconditional covariance matrix. 
 }
 \usage{
-covEWMA(factors, lambda = 0.96)
+covEWMA(factors, lambda = 0.96, return.cor=FALSE)
 }
 
 \arguments{
@@ -20,18 +20,21 @@ periods and \code{K} is the number of assets.
   \item{lambda}{
 Scalar exponential decay factor. Must lie between between 0 and 1.
 }
+  \item{return.cor}{
+Logical, if TRUE then return EWMA correlation matrices. 
+}  
 }
 \details{
-Let EWMA covariance matrix at time \code{t} is compute as \cr 
+The EWMA covariance matrix at time \code{t} is compute as \cr 
 \code{Sigma(t) = lambda*Sigma(t-1) + (1-lambda)*R(t)t(R(t))}  \cr
 where \code{R(t)} is the \code{K x 1} vector of returns at time \code{t}.
 }
 \value{
-\code{T x K x K} array giving the time series of EWMA covariance matrices. 
+\code{T x K x K} array giving the time series of EWMA covariance matrices if
+\code{return.cor=FALSE} and EWMA correlation matrices if \code{return.cor=TRUE}. 
 }
 \references{
-Zivot, E. and J. Wang (2006), \emph{Modeling Financial Time Series with S-PLUS, 
-Second Edition}, Springer-Verlag.
+Zivot, E. and J. Wang (2006), \emph{Modeling Financial Time Series with S-PLUS, Second Edition}, Springer-Verlag.
 }
 \author{
 Eric Zivot and Yi-An Chen.

@@ -1,9 +1,10 @@
 covEWMA <-
-function(factors, lambda=0.96) {
+function(factors, lambda=0.96, return.cor=FALSE) {
 ## Inputs:
 ## factors    N x K numerical factors data.  data is class data.frame
 ##            N is the time length and K is the number of the factors.  
 ## lambda     scalar. exponetial decay factor between 0 and 1. 
+## return.cor Logical, if TRUE then return EWMA correlation matrices
 ## Output:  
 ## cov.f.ewma  array. dimension is N x K x K.
 ## comments:
@@ -35,7 +36,15 @@ if (lambda>=1 || lambda <= 0){
 }
   # 9/15/11: add dimnames to array
   dimnames(cov.f.ewma) = list(t.names, factor.names, factor.names)
-  return(cov.f.ewma)  
-
+  
+  if(return.cor) {
+   cor.f.ewma = cov.f.ewma
+   for (i in 1:dim(cor.f.ewma)[1]) {
+    cor.f.ewma[i, , ] = cov2cor(cov.f.ewma[i, ,])
+   }
+   return(cor.f.ewma)
+  } else{
+      return(cov.f.ewma)  
+  }
 }
 

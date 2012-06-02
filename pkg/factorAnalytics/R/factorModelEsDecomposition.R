@@ -1,5 +1,5 @@
 factorModelEsDecomposition <-
-function(bootData, beta.vec, sig2.e, tail.prob = 0.05) {
+function(Data, beta.vec, sig2.e, tail.prob = 0.05) {
 ## Compute factor model factor ES decomposition based on Euler's theorem given historic 
 ## or simulated data and factor model parameters.
 ## The partial derivative of ES wrt factor beta is computed
@@ -7,7 +7,7 @@ function(bootData, beta.vec, sig2.e, tail.prob = 0.05) {
 ## VaR is compute either as the sample quantile or as an estimated quantile
 ## using the Cornish-Fisher expansion
 ## inputs:
-## bootData   B x (k+2) matrix of bootstrap data. First column contains the fund returns,
+## Data       B x (k+2) matrix of data. First column contains the fund returns,
 ##            second through k+1 columns contain factor returns, (k+2)nd column contain residuals
 ##            scaled to have variance 1.
 ## beta.vec   k x 1 vector of factor betas
@@ -35,8 +35,8 @@ function(bootData, beta.vec, sig2.e, tail.prob = 0.05) {
 ##    Value-at-Risk: Their Estimation Error, Decomposition, and Optimization
 ##    Bank of Japan.
 ## 3. Meucci (2007). "Risk Contributions from Generic User-Defined Factors," Risk.
-  bootData = as.matrix(bootData)
-  ncol.bootData = ncol(bootData)
+  Data = as.matrix(Data)
+  ncol.Data = ncol(Data)
   if(is.matrix(beta.vec)) {
     beta.names = c(rownames(beta.vec), "residual")
   } else if(is.vector(beta.vec)) {
@@ -48,16 +48,16 @@ function(bootData, beta.vec, sig2.e, tail.prob = 0.05) {
 	beta.star.vec = c(beta.vec, sqrt(sig2.e))
 	names(beta.star.vec) = beta.names
 
-  VaR.fm = quantile(bootData[, 1], prob=tail.prob)
-  idx = which(bootData[, 1] <= VaR.fm)
-  ES.fm = -mean(bootData[idx, 1])
+  VaR.fm = quantile(Data[, 1], prob=tail.prob)
+  idx = which(Data[, 1] <= VaR.fm)
+  ES.fm = -mean(Data[idx, 1])
   
   ##
   ## compute marginal contribution to ES
   ##
   ## compute marginal ES as expected value of factor return given fund
   ## return is less than or equal to VaR
-    mcES.fm = -as.matrix(colMeans(bootData[idx, -1]))
+    mcES.fm = -as.matrix(colMeans(Data[idx, -1]))
   
 ## compute correction factor so that sum of weighted marginal ES adds to portfolio ES
 #cf = as.numeric( ES.fm / sum(mcES.fm*beta.star.vec) )

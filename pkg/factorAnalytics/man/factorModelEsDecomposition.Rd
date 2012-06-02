@@ -13,11 +13,11 @@ value-at-risk (VaR). VaR is compute as the sample quantile of the historic or
 simulated data.
 }
 \usage{
-factorModelEsDecomposition(bootData, beta.vec, sig2.e, tail.prob = 0.05)
+factorModelEsDecomposition(Data, beta.vec, sig2.e, tail.prob = 0.05)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{bootData}{
+  \item{Data}{
   \code{B x (k+2)} matrix of historic or simulated data. The first column 
   contains the fund returns, the second through \code{k+1}st columns contain 
   the returns on the \code{k} factors, and the \code{(k+2)}nd column contain 
@@ -35,8 +35,8 @@ scalar, tail probability for VaR quantile. Typically 0.01 or 0.05.
 }
 \details{
  The factor model has the form \cr
- \code{R(t) = beta'F(t) + e(t) = beta.star'F.star(t)} \cr
- where \code{beta.star = (beta, sig.e)'} and \code{F.star(t) = (F(t)', z(t))'} 
+ \code{R(t) = t(beta)*F(t) + e(t) = t(beta.star)*F.star(t)} \cr
+ where \code{beta.star = t(beta, sig.e)} and \code{F.star(t) = (t(F(t)), t(z(t)))} 
  By Euler's theorem \cr
  \code{ES.fm = sum(cES.fm) = sum(beta.star*mcES.fm)} \cr
  
@@ -84,11 +84,11 @@ fit <- fitMacroeconomicFactorModel(ret.assets,factors,fit.method="OLS",
                                  variable.selection="all subsets",factor.set=3)
 # risk factor contribution to ETL
 # combine fund returns, factor returns and residual returns for HAM1
-tmpData = cbind(managers.df[,1], managers.df[,(7:9)],
+tmpData = cbind(ret.assets[,1], factors,
                residuals(fit$asset.fit$HAM1)/sqrt(fit$residVars.vec[1]))
 colnames(tmpData)[c(1,5)] = c("HAM1", "residual")
 factor.es.decomp.HAM1 = factorModelEsDecomposition(tmpData, fit$beta.mat[1,],
-                                                fit$residVars.vec[1], tail.prob=0.05)
+                                           fit$residVars.vec[1], tail.prob=0.05)
 
 
 }
