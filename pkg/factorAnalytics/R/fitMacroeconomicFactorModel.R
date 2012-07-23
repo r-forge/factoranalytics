@@ -38,7 +38,11 @@ function(ret.assets, factors, factor.set = 2,
 ## r2.vec              vector of R-square values
 ## residVars.vec       vector of residual variances
 ## call               function call.  
-
+  require(leaps)
+  require(lars)
+  require(robust)
+  require(ellipse)
+  require(MASS)
 this.call <- match.call()
   
 if (is.data.frame(ret.assets) & is.data.frame(factors) ) {
@@ -284,8 +288,12 @@ ans = list (asset.fit = reg.list,
             beta.mat  = Betas,
             r2.vec    = R2values,
             residVars.vec = ResidVars,
-            call      = this.call
+            call      = this.call,
+            ret.assets = ret.assets,
+            factors   = factors,
+            variable.selection = variable.selection
             )
+class(ans) = "MacroFactorModel"
 return(ans)
 }
 
