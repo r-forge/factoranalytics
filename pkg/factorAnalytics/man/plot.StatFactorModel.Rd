@@ -10,7 +10,7 @@ Generic function of plot method for fitStatisticFactorModel. Either plot all fit
 \usage{
 \method{plot}{StatFactorModel}(fit.stat, variables, cumulative = TRUE, style = "bar",
          which.plot = c("none","1L","2L","3L","4L","5L","6L","7L","8L"),
-         hgrid = FALSE, vgrid = FALSE,plot.single=FALSE, fundName,
+         hgrid = FALSE, vgrid = FALSE, plot.single=FALSE, fundName,
          which.plot.single=c("none","1L","2L","3L","4L","5L","6L",
                              "7L","8L","9L","10L","11L","12L","13L"), ...)
 
@@ -46,6 +46,9 @@ Logic. Whether to plot horizontal grid or not. Defualt is FALSE.
 \item{vgrid}{
 Logic. Whether to plot vertical grid or not. Defualt is FALSE.
 }
+\item{plot.single}{
+Plot a single asset of lm class. Defualt is FALSE.
+}
 \item{fundName}{
 Name of the asset to be plotted. 
 }             
@@ -65,6 +68,9 @@ integer indicating which plot to create:
 11=    CUSUM plot of OLS residuals
 12=    CUSUM plot of recursive estimates relative to full sample estimates
 13=    rolling estimates over 24 month window
+}
+\item{...}{
+other variables for barplot method.
 }
 }
 \details{
