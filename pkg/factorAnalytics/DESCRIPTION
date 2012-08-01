@@ -1,7 +1,7 @@
 Package: factorAnalytics
 Type: Package
 Title: factor analysis
-Version: 1.0
+Version: 1.1
 Date: 2011-07-22
 Author: Eric Zivot and Yi-An Chen
 Maintainer: Yi-An Chen <chenyian@uw.edu>
