@@ -2,7 +2,7 @@
 \alias{summary.MacroFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-summary class of MacrofactorModel.
+summary MacrofactorModel object.
 }
 \description{
 Generic function of summary method for fitMacroeconomicFactorModel. 

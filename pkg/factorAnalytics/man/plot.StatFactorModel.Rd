@@ -2,7 +2,7 @@
 \alias{plot.StatFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-plot class of StatFactorModel.
+plot StatFactorModel object.
 }
 \description{
 Generic function of plot method for fitStatisticFactorModel. Either plot all fit models or choose a single asset to plot. 

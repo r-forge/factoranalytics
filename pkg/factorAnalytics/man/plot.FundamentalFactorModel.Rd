@@ -2,7 +2,7 @@
 \alias{plot.FundamentalFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-plot class of FundamentalFactorModel.
+plot FundamentalFactorModel object.
 }
 \description{
 Generic function of plot method for fitFundamentalFactorModel. 

@@ -2,7 +2,7 @@
 \alias{print.MacroFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-print class of MacrofactorModel.
+print MacrofactorModel object
 }
 \description{
 Generic function of print method for fitMacroeconomicFactorModel.

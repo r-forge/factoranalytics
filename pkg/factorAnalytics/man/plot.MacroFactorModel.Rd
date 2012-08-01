@@ -2,7 +2,7 @@
 \alias{plot.MacroFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-plot class of MacrofactorModel.
+plot MacrofactorModel object.
 }
 \description{
 Generic function of plot method for fitMacroeconomicFactorModel. Either plot all fit models or choose a single asset to plot. 

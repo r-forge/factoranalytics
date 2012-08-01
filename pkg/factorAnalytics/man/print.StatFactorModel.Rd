@@ -2,7 +2,7 @@
 \alias{print.StatFactorModel}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-print class of StatFactorModel.
+print StatFactorModel object
 }
 \description{
 Generic function of print method for fitStatFactorModel.
