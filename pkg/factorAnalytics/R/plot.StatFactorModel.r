@@ -66,7 +66,19 @@ function(fit.stat, variables, cumulative = TRUE, style = "bar",
     ##                  12    CUSUM plot of recursive estimates relative to full sample estimates
     ##                  13    rolling estimates over 24 month window
     which.plot.single<-which.plot.single[1]
-    fit.lm = fit.stat$asset.fit[[fundName]]
+    
+    
+    
+    
+    if (which.plot.single=="none")
+     
+   
+    # pca method
+    
+    if ( dim(fit$asset.ret)[1] > dim(fit$asset.ret)[2] ) {
+      
+      
+      fit.lm = fit.stat$asset.fit[[fundName]]
     
     if (!(class(fit.lm) == "lm"))
       stop("Must pass a valid lm object")
@@ -80,8 +92,6 @@ function(fit.stat, variables, cumulative = TRUE, style = "bar",
     actual.z = zoo(fit.lm$model[,1], as.Date(rownames(fit.lm$model)))
     tmp.summary = summary(fit.lm)
     
-    
-    if (which.plot.single=="none")
       which.plot.single<-menu(c("time series plot of actual and fitted values",
                                 "time series plot of residuals with standard error bands",
                                 "time series plot of squared residuals",
@@ -96,6 +106,7 @@ function(fit.stat, variables, cumulative = TRUE, style = "bar",
                                 "CUSUM plot of recursive estimates relative to full sample estimates",
                                 "rolling estimates over 24 month window"),
                               title="\nMake a plot selection (or 0 to exit):\n")
+    
     switch(which.plot.single,
            "1L" =  {
              ##  time series plot of actual and fitted values
@@ -180,7 +191,78 @@ function(fit.stat, variables, cumulative = TRUE, style = "bar",
            },
            invisible()
     )
-    
+    } else {
+      dates <- rownames(fit$factors) 
+       actual.z <- zoo(fit$asset.ret,as.Date(dates))
+       residuals.z <- zoo(fit$residuals,as.Date(dates))
+       fitted.z <- actual.z - residuals.z
+      t <- length(dates)
+      k <- fit$k
+      
+      which.plot.single<-menu(c("time series plot of actual and fitted values",
+                                "time series plot of residuals with standard error bands",
+                                "time series plot of squared residuals",
+                                "time series plot of absolute residuals",
+                                "SACF and PACF of residuals",
+                                "SACF and PACF of squared residuals",
+                                "SACF and PACF of absolute residuals",
+                                "histogram of residuals with normal curve overlayed",
+                                "normal qq-plot of residuals"),
+                              title="\nMake a plot selection (or 0 to exit):\n")
+      switch(which.plot.single,
+             "1L" =  {
+#       "time series plot of actual and fitted values",
+       
+       plot(actual.z[,fundName], main=fundName, ylab="Monthly performance", lwd=2, col="black")
+       lines(fitted.z[,fundName], lwd=2, col="blue")
+       abline(h=0)
+       legend(x="bottomleft", legend=c("Actual", "Fitted"), lwd=2, col=c("black","blue"))
+             },
+          "2L"={    
+#       "time series plot of residuals with standard error bands"
+        plot(residuals.z[,fundName], main=fundName, ylab="Monthly performance", lwd=2, col="black")
+        abline(h=0)
+        sigma = (sum(residuals.z[,fundName]^2)*(t-k)^-1)^(1/2)
+        abline(h=2*sigma, lwd=2, lty="dotted", col="red")
+        abline(h=-2*sigma, lwd=2, lty="dotted", col="red")
+        legend(x="bottomleft", legend=c("Residual", "+/ 2*SE"), lwd=2,
+                   lty=c("solid","dotted"), col=c("black","red"))     
+            
+          },   
+        "3L"={
+        #       "time series plot of squared residuals"
+          plot(residuals.z[,fundName]^2, main=fundName, ylab="Squared residual", lwd=2, col="black")
+          abline(h=0)
+          legend(x="topleft", legend="Squared Residuals", lwd=2, col="black")   
+        },                
+          "4L" = {
+           ## time series plot of absolute residuals
+               plot(abs(residuals.z[,fundName]), main=fundName, ylab="Absolute residual", lwd=2, col="black")
+               abline(h=0)
+               legend(x="topleft", legend="Absolute Residuals", lwd=2, col="black")
+             },
+             "5L" = {
+               ## SACF and PACF of residuals
+           chart.ACFplus(residuals.z[,fundName], main=paste("Residuals: ", fundName, sep=""))
+             },
+             "6L" = {
+               ## SACF and PACF of squared residuals
+               chart.ACFplus(residuals.z[,fundName]^2, main=paste("Residuals^2: ", fundName, sep=""))
+             },
+             "7L" = {
+               ## SACF and PACF of absolute residuals
+               chart.ACFplus(abs(residuals.z[,fundName]), main=paste("|Residuals|: ", fundName, sep=""))
+             },
+             "8L" = {
+               ## histogram of residuals with normal curve overlayed
+               chart.Histogram(residuals.z[,fundName], methods="add.normal", main=paste("Residuals: ", fundName, sep=""))
+             },
+             "9L" = {
+               ##  normal qq-plot of residuals
+               chart.QQPlot(residuals.z[,fundName], envelope=0.95, main=paste("Residuals: ", fundName, sep=""))
+             },          
+             invisible()  )
+             }  
     
     
   } else {    
@@ -314,9 +396,9 @@ function(fit.stat, variables, cumulative = TRUE, style = "bar",
              barplot(cr.var, main="Factor Contributions to VaR",
                      legend.text=T, args.legend=list(x="topleft"),
                      col=c(1:50) )
-      }
+      }, invisible()
                  
      )
-  invisible()
+ 
 }
 }

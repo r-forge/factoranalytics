@@ -28,8 +28,8 @@ plot.FM.attribution <- function(fm.attr, which.plot=c("none","1L","2L","3L"),max
              barplot(bar,horiz=TRUE,main=fundName,las=1)    
            },
            "3L" = {
-             chart.TimeSeries(fm.attr$attr.list[[fundName]],legend.loc=legend.loc,
-                              main=paste("Time series of attributed returns of ",fundName,sep="")  )
+             chart.TimeSeries(fm.attr$attr.list[[fundName]],
+                              main=paste("Time series of attributed returns of ",fundName,sep=""),... )
            },
     invisible())
     }
@@ -53,8 +53,8 @@ plot.FM.attribution <- function(fm.attr, which.plot=c("none","1L","2L","3L"),max
   
   "1L" = {
     par(mfrow=c(2,n/2))
-    for (i in fundnames) {
-      bar <- c(fm.attr$cum.spec.ret[i],fm.attr$cum.ret.attr.f[i,])
+    for (i in fundnames[1:n]) {
+    bar <- c(fm.attr$cum.spec.ret[i],fm.attr$cum.ret.attr.f[i,])
     names(bar)[1] <- "specific.returns"
     barplot(bar,horiz=TRUE,main=i,las=1)  
     }
@@ -62,7 +62,7 @@ plot.FM.attribution <- function(fm.attr, which.plot=c("none","1L","2L","3L"),max
     },
   "2L" ={
     par(mfrow=c(2,n/2))
-    for (i in fundnames) {
+    for (i in fundnames[1:n]) {
       bar <- coredata(fm.attr$attr.list[[i]][as.Date(date)])
       barplot(bar,horiz=TRUE,main=i,las=1)  
     }
@@ -70,8 +70,8 @@ plot.FM.attribution <- function(fm.attr, which.plot=c("none","1L","2L","3L"),max
   }, 
   "3L" = {
     par(mfrow=c(2,n/2))
-    for (i in fundnames) {
-      chart.TimeSeries(fm.attr$attr.list[[i]],legend.loc="topleft",main=i)
+    for (i in fundnames[1:n]) {
+      chart.TimeSeries(fm.attr$attr.list[[i]],main=i)
     }
     par(mfrow=c(1,1))
   },     

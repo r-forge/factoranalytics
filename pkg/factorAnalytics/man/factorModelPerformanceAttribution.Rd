@@ -13,7 +13,7 @@ factorModelPerformanceAttribution(fit,benchmark=NULL)
 
 \arguments{
   \item{fit}{
-output of function "fitMacroeconomicsFactorModel".
+Class of "MacroFactorModel", "FundamentalFactorModel" or "statFactorModel".
 }
   \item{benchmark}{
 a zoo, vector or data.frame provides benchmark time series returns.
