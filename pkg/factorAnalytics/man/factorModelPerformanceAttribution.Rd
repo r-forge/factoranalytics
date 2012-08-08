@@ -8,7 +8,7 @@ Compute BARRA-type performance attribution
 Decompose total returns or active returns into returns attributed to factors and specific returns. Class of FM.attribution is generated and generic function \code{plot} and \code{summary} can be used.   
 }
 \usage{
-factorModelPerformanceAttribution(fit,benchmark=NULL)
+factorModelPerformanceAttribution(fit,benchmark=NULL,...)
 }
 
 \arguments{
@@ -18,6 +18,9 @@ Class of "MacroFactorModel", "FundamentalFactorModel" or "statFactorModel".
   \item{benchmark}{
 a zoo, vector or data.frame provides benchmark time series returns.
 }
+ \item{...}{
+ Other controled variables for fit methods.  
+ }
   
 }
 \details{
