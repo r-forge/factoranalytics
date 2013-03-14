@@ -46,7 +46,7 @@ Yi-An Chen.
 }
 \examples{
 \dontrun{
-data("managers.df.rda")
+data(managers.df)
 ret.assets = managers.df[,(1:6)]
 factors    = managers.df[,(7:9)]
 fit.macro <- fitMacroeconomicFactorModel(ret.assets,factors,fit.method="OLS", factor.set = 3,
